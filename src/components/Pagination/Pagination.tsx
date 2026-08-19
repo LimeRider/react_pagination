@@ -1,7 +1,7 @@
 type Props = {
   total: number;
   perPage: number;
-  currentPage: number;
+  currentPage?: number;
   onPageChange: (page: number) => void;
 };
 
