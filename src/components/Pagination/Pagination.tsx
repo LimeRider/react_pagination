@@ -8,7 +8,7 @@ type Props = {
 export const Pagination: React.FC<Props> = ({
   total,
   perPage,
-  currentPage,
+  currentPage = 1,
   onPageChange,
 }) => {
   const pagesCount = Math.ceil(total / perPage);
@@ -43,7 +43,9 @@ export const Pagination: React.FC<Props> = ({
             href={`#${page}`}
             onClick={e => {
               e.preventDefault();
-              onPageChange(page);
+              if (page !== currentPage) {
+                onPageChange(page);
+              }
             }}
           >
             {page}

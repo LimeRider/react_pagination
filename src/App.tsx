@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import React from 'react';
 import './App.css';
 import { getNumbers } from './utils';
 import { Pagination } from './components/Pagination';
@@ -7,12 +8,22 @@ import { Pagination } from './components/Pagination';
 const items = getNumbers(1, 42).map(n => `Item ${n}`);
 
 export const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(3);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const perPage = Number(searchParams.get('perPage')) || 5;
 
   const startIndex = (currentPage - 1) * perPage;
   const visibleItems = items.slice(startIndex, startIndex + perPage);
   const endIndex = Math.min(startIndex + perPage, items.length);
+
+  const handlePageChange = (page: number) => {
+    setSearchParams({ page: String(page), perPage: String(perPage) });
+  };
+
+  const handlePerPageChange = (newPerPage: number) => {
+    setSearchParams({ page: '1', perPage: String(newPerPage) });
+  };
 
   return (
     <div className="container">
@@ -20,7 +31,7 @@ export const App: React.FC = () => {
 
       <p className="lead" data-cy="info">
         Page {currentPage}
-        (items {startIndex + 1}-{endIndex} of {items.length})
+        (items {startIndex + 1} - {endIndex} of {items.length})
       </p>
 
       <div className="form-group row">
@@ -31,8 +42,7 @@ export const App: React.FC = () => {
             className="form-control"
             value={perPage}
             onChange={e => {
-              setPerPage(Number(e.target.value));
-              setCurrentPage(1);
+              handlePerPageChange(Number(e.target.value));
             }}
           >
             <option value="3">3</option>
@@ -52,7 +62,7 @@ export const App: React.FC = () => {
         total={items.length}
         perPage={perPage}
         currentPage={currentPage}
-        onPageChange={setCurrentPage}
+        onPageChange={handlePageChange}
       />
       <ul>
         {visibleItems.map(item => (
@@ -64,5 +74,3 @@ export const App: React.FC = () => {
     </div>
   );
 };
-
-export default App;
